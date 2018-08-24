@@ -18,6 +18,8 @@ int colors [8] [3] = {
 
 int counter;
 
+char classifier; // Classifier received from Processing
+
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PINNeoPixel, NEO_GRBW + NEO_KHZ800);
 
@@ -37,20 +39,28 @@ void effaceTout() {
 }
 
 void loop() {
-    effaceTout();
+
+  if (Serial.available()) {
+    classifier = Serial.read();
+  }
+
+  if (classifier == '1') {
     singleColor("blue");
+  } else if (classifier == '2') {
+    singleColor("red");
+  } else if (classifier == '3') {
+    singleColor("green");
+  }
 
-
-
-//  if (counter % 100 == 0) {
-//    effaceTout();
-//    for (int i = 0; i < NUMPIXELS; i++) {
-//      byte col[3];
-//      chooseColor(col);
-//      pixels.setPixelColor(i, pixels.Color(col[0], col[1], col[2]));
-//    }
-//    counter = 0;
-//  }
+  //  if (counter % 100 == 0) {
+  //    effaceTout();
+  //    for (int i = 0; i < NUMPIXELS; i++) {
+  //      byte col[3];
+  //      chooseColor(col);
+  //      pixels.setPixelColor(i, pixels.Color(col[0], col[1], col[2]));
+  //    }
+  //    counter = 0;
+  //  }
 
   pixels.show(); // This sends the updated pixel color to the hardware.
 
@@ -85,12 +95,15 @@ int chooseRandomColor() {
 }
 
 void singleColor(String col) {
+  effaceTout();
   for (int i = 0; i < NUMPIXELS; i++) {
     int ledId = i;
     if (col == "blue") {
       pixels.setPixelColor(ledId, pixels.Color(0, 0, 20));
     } else if (col == "red") {
       pixels.setPixelColor(ledId, pixels.Color(20, 0, 0));
+    } else if (col == "green") {
+      pixels.setPixelColor(ledId, pixels.Color(0, 20, 0));
     }
   }
 }
