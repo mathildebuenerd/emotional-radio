@@ -19,4 +19,8 @@ class Emotion {
       soundFiles[i].stop();
     }
   }
+  
+  void lightLED(String classifier) {
+    myPort.write(classifier); // Send the current classifier to Arduino
+  }
 }

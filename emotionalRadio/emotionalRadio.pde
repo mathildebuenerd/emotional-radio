@@ -13,8 +13,13 @@ import processing.sound.*;
 import java.io.*;
 import java.lang.*; 
 
+// For connection with Arduino
+import processing.serial.*;
+
 OscP5 osc;
 File file;
+Serial myPort;
+String serialVal;
 
 ArrayList emotions;
 
@@ -40,6 +45,9 @@ void setup()
   lastClassifier = 1;
   currentClassifier = 1; // default emotion
   osc = new OscP5(this, 12000); // we listen to port 12000
+  
+  String portName = Serial.list()[0]; // Set the port
+  myPort = new Serial(this, portName, 9600);
 
   // We add soundFiles to Emotion objects
   for (int i=0; i<emotionsList.length; i++) {
@@ -68,6 +76,7 @@ void oscEvent(OscMessage msg) {
       Emotion emotion = (Emotion)emotions.get(currentClassifier-1); // we get the current emotion, as the arraylist starts at 0 and the classifiers at 1, we remove 1
       clearSound(); // then we clear all sounds
       emotion.playRandomSound();
+      emotion.lightLED(str(currentClassifier));
     }
     lastClassifier = currentClassifier;
   }
