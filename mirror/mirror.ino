@@ -1,7 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 #define PINNeoPixel 8
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS 15
+#define NUMPIXELS 104
 #define BRIGHTNESS 10
 
 // COLORS
@@ -29,6 +29,8 @@ void setup() {
   pixels.begin(); // This initializes the NeoPixel library.
   Serial.begin(9600);
   counter = 0;
+  //effaceTout();
+
 
 }
 
@@ -36,21 +38,23 @@ void effaceTout() {
   for (int i = 0; i < NUMPIXELS ; i++) {
     pixels.setPixelColor(i, pixels.Color(0, 0, 0));
   }
+  pixels.show();
 }
 
 void loop() {
+ effaceTout();
 
-  if (Serial.available()) {
-    classifier = Serial.read();
-  }
+  //  if (Serial.available()) {
+  //    classifier = Serial.read();
+  //  }
 
-  if (classifier == '1') {
-    singleColor("blue");
-  } else if (classifier == '2') {
-    singleColor("red");
-  } else if (classifier == '3') {
-    singleColor("green");
-  }
+  //  if (classifier == '1') {
+  //singleColor("blue");
+  //  } else if (classifier == '2') {
+  //    singleColor("red");
+  //  } else if (classifier == '3') {
+  //    singleColor("green");
+  //  }
 
   //  if (counter % 100 == 0) {
   //    effaceTout();
@@ -62,9 +66,29 @@ void loop() {
   //    counter = 0;
   //  }
 
-  pixels.show(); // This sends the updated pixel color to the hardware.
+  //hasard();
+  //sparkle(10, 10, 50);
+  //sky(1);
+  //sparklingSky(1);
+  //delay(10);
+  //counter++;
 
-  counter++;
+}
+
+
+void sparkle(int red, int green, int blue) {
+  effaceTout();
+  int i;
+
+  for (i = 0; i < 5; i++) {
+    int id = int(random(NUMPIXELS));
+    //byte col[3];
+    //chooseColor(col);
+    pixels.setPixelColor(id, random(red), random(green), random(blue));
+  }
+  pixels.show();
+
+
 
 }
 
@@ -99,7 +123,7 @@ void singleColor(String col) {
   for (int i = 0; i < NUMPIXELS; i++) {
     int ledId = i;
     if (col == "blue") {
-      pixels.setPixelColor(ledId, pixels.Color(0, 0, 20));
+      pixels.setPixelColor(ledId, pixels.Color(0, 0, BRIGHTNESS));
     } else if (col == "red") {
       pixels.setPixelColor(ledId, pixels.Color(20, 0, 0));
     } else if (col == "green") {
@@ -109,11 +133,76 @@ void singleColor(String col) {
 }
 
 void hasard() {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    int ledId = i;
+  effaceTout();
+  for (int i = 0; i < 50; i++) {
+    int ledId = int(random(NUMPIXELS));
     color = chooseRandomColor();
     pixels.setPixelColor(ledId, pixels.Color(colors[color][0], colors[color][1], colors[color][2]));
   }
+  pixels.show();
+}
+
+void sky(uint8_t wait) {
+  uint16_t i, j;
+
+  for (j = 0; j < 256; j++) {
+    for (i = 0; i < pixels.numPixels(); i++) {
+      pixels.setPixelColor(i, Wheel((i + j) & -100));
+      //int newj = map(j, 0, 256, 128, 170);
+      //Serial.println(j);
+      //Serial.println(newj);
+     // pixels.setPixelColor(i, j+i, j+i,255);
+    }
+    pixels.show();
+    delay(wait);
+  }
+}
+
+void sparklingSky(uint8_t wait) {
+  
+  uint16_t i, j;
+
+  effaceTout();
+
+  for (j = 0; j < 256; j++) {
+    for (i = 0; i < 10; i++) {
+      int randomPixel = int(random(pixels.numPixels()));
+      pixels.setPixelColor(randomPixel, Wheel((i + j) & -100));
+      //int newj = map(j, 0, 256, 128, 170);
+      //Serial.println(j);
+      //Serial.println(newj);
+     // pixels.setPixelColor(i, j+i, j+i,255);
+    }
+    pixels.show();
+    delay(wait);
+  }
+}
+
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
+
+  for (j = 0; j < 256; j++) {
+    for (i = 0; i < pixels.numPixels(); i++) {
+      pixels.setPixelColor(i, Wheel((i + j) & 255));
+    }
+    pixels.show();
+    delay(wait);
+  }
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  //if (WheelPos < 85) {
+    return pixels.Color(255 - WheelPos * 3, 240 - WheelPos * 3, 255);
+  //}
+  //if (WheelPos < 170) {
+    //WheelPos -= 85;
+    //return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  //}
+  //WheelPos -= 170;
+  //return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
 
