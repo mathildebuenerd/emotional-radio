@@ -29,8 +29,9 @@ int lastClassifier;
 void setup() {
   pixels.begin(); // This initializes the NeoPixel library.
   Serial.begin(9600);
-  lastClassifier = 1;
+  lastClassifier = 0;
   counter = 0;
+  sky(1);
   //effaceTout();
 
 
@@ -44,42 +45,60 @@ void effaceTout() {
 }
 
 void loop() {
+
+//    sky(1);
   //effaceTout();
 
+//  if (counter % 100 == 0) {
     if (Serial.available()) {
       classifier = Serial.read();
+      Serial.print(classifier);
     }
 
-  if (classifier == '1') {
-    sky(1);
-  } else if (classifier == '2') {
-    singleColor("red");
-  } else if (classifier == '3') {
-    singleColor("green");
-  }
+    if (classifier != lastClassifier) {          
+//      effaceTout();
+      if (classifier == '1') {
+        sky(1);
+      } else if (classifier == '2') {
+        sparkle(100, 100, 255);
+      } else if (classifier == '3') {
+        rainbow(3);
+      }
+      lastClassifier = classifier;
+    }
 
-  //  if (counter % 100 == 0) {
-  //    effaceTout();
-  //    for (int i = 0; i < NUMPIXELS; i++) {
-  //      byte col[3];
-  //      chooseColor(col);
-  //      pixels.setPixelColor(i, pixels.Color(col[0], col[1], col[2]));
-  //    }
-  //    counter = 0;
-  //  }
 
-  //hasard();
-  //sparkle(10, 10, 50);
-  //sky(1);
-  //sparklingSky(1);
-  //delay(10);
-  //counter++;
+    //    counter = 0;
+    //  }
+
+
+
+    //  if (counter % 100 == 0) {
+    //    effaceTout();
+    //    for (int i = 0; i < NUMPIXELS; i++) {
+    //      byte col[3];
+    //      chooseColor(col);
+    //      pixels.setPixelColor(i, pixels.Color(col[0], col[1], col[2]));
+    //    }
+    //    counter = 0;
+    //  }
+
+    //hasard();
+    //sparkle(100, 100, 255);
+    //sky(1);
+    //sparklingSky(1);
+    //delay(10);
+//    counter = 0;
+//  }
+
+//  counter++;
 
 }
 
 
 void sparkle(int red, int green, int blue) {
-  effaceTout();
+
+//  effaceTout();
   int i;
 
   for (i = 0; i < 5; i++) {
@@ -89,7 +108,7 @@ void sparkle(int red, int green, int blue) {
     pixels.setPixelColor(id, random(red), random(green), random(blue));
   }
   pixels.show();
-
+delay(5);
 
 
 }
