@@ -12,6 +12,7 @@ class Emotion {
   void playRandomSound() {
     int randomFile = int(random(numberOfFiles));
     soundFiles[randomFile].play();
+    soundFiles[randomFile].loop();
   }
   
   void stopSound() {

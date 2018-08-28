@@ -24,10 +24,12 @@ char classifier; // Classifier received from Processing
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PINNeoPixel, NEO_GRBW + NEO_KHZ800);
 
 int color;
+int lastClassifier;
 
 void setup() {
   pixels.begin(); // This initializes the NeoPixel library.
   Serial.begin(9600);
+  lastClassifier = 1;
   counter = 0;
   //effaceTout();
 
@@ -42,19 +44,19 @@ void effaceTout() {
 }
 
 void loop() {
- effaceTout();
+  //effaceTout();
 
-  //  if (Serial.available()) {
-  //    classifier = Serial.read();
-  //  }
+    if (Serial.available()) {
+      classifier = Serial.read();
+    }
 
-  //  if (classifier == '1') {
-  //singleColor("blue");
-  //  } else if (classifier == '2') {
-  //    singleColor("red");
-  //  } else if (classifier == '3') {
-  //    singleColor("green");
-  //  }
+  if (classifier == '1') {
+    sky(1);
+  } else if (classifier == '2') {
+    singleColor("red");
+  } else if (classifier == '3') {
+    singleColor("green");
+  }
 
   //  if (counter % 100 == 0) {
   //    effaceTout();
@@ -151,7 +153,7 @@ void sky(uint8_t wait) {
       //int newj = map(j, 0, 256, 128, 170);
       //Serial.println(j);
       //Serial.println(newj);
-     // pixels.setPixelColor(i, j+i, j+i,255);
+      // pixels.setPixelColor(i, j+i, j+i,255);
     }
     pixels.show();
     delay(wait);
@@ -159,7 +161,7 @@ void sky(uint8_t wait) {
 }
 
 void sparklingSky(uint8_t wait) {
-  
+
   uint16_t i, j;
 
   effaceTout();
@@ -171,7 +173,7 @@ void sparklingSky(uint8_t wait) {
       //int newj = map(j, 0, 256, 128, 170);
       //Serial.println(j);
       //Serial.println(newj);
-     // pixels.setPixelColor(i, j+i, j+i,255);
+      // pixels.setPixelColor(i, j+i, j+i,255);
     }
     pixels.show();
     delay(wait);
@@ -195,15 +197,12 @@ void rainbow(uint8_t wait) {
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;
   //if (WheelPos < 85) {
-    return pixels.Color(255 - WheelPos * 3, 240 - WheelPos * 3, 255);
+  return pixels.Color(255 - WheelPos * 3, 240 - WheelPos * 3, 255);
   //}
   //if (WheelPos < 170) {
-    //WheelPos -= 85;
-    //return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  //WheelPos -= 85;
+  //return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   //}
   //WheelPos -= 170;
   //return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
-
-
-
