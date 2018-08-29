@@ -25,14 +25,18 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PINNeoPixel, NEO_GRBW + 
 
 int color;
 int lastClassifier;
+boolean isAnimationFinished;
 
 void setup() {
   pixels.begin(); // This initializes the NeoPixel library.
   Serial.begin(9600);
+
+  // Initialize the first classifier to 0
   lastClassifier = 0;
-  counter = 0;
+  isAnimationFinished = false;
+
+  // Starts the first animation
   sky(1);
-  //effaceTout();
 
 
 }
@@ -46,69 +50,59 @@ void effaceTout() {
 
 void loop() {
 
-//    sky(1);
-  //effaceTout();
-
-//  if (counter % 100 == 0) {
-    if (Serial.available()) {
+  if (Serial.available()) {
       classifier = Serial.read();
-      Serial.print(classifier);
-    }
-
-    if (classifier != lastClassifier) {          
-//      effaceTout();
-      if (classifier == '1') {
-        sky(1);
-      } else if (classifier == '2') {
-        sparkle(100, 100, 255);
-      } else if (classifier == '3') {
-        rainbow(3);
-      }
-      lastClassifier = classifier;
     }
 
 
-    //    counter = 0;
+  // If there is no animation at the time
+  if (isAnimationFinished || classifier != lastClassifier) {
+    
+    //  if (classifier != lastClassifier) {
+    effaceTout();
+    if (classifier == '1') {
+      sky(1);
+    } else if (classifier == '2') {
+      sparkle(100, 100, 255);
+    } else if (classifier == '3') {
+      rainbow(3);
+    }
+
+    lastClassifier = classifier;
     //  }
+  }
 
 
 
-    //  if (counter % 100 == 0) {
-    //    effaceTout();
-    //    for (int i = 0; i < NUMPIXELS; i++) {
-    //      byte col[3];
-    //      chooseColor(col);
-    //      pixels.setPixelColor(i, pixels.Color(col[0], col[1], col[2]));
-    //    }
-    //    counter = 0;
-    //  }
 
-    //hasard();
-    //sparkle(100, 100, 255);
-    //sky(1);
-    //sparklingSky(1);
-    //delay(10);
-//    counter = 0;
-//  }
-
-//  counter++;
+  //hasard();
+  //sparkle(100, 100, 255);
+  //sky(1);
+  //sparklingSky(1);
+  //delay(10);
 
 }
 
 
 void sparkle(int red, int green, int blue) {
 
-//  effaceTout();
-  int i;
+  int i, j;
 
-  for (i = 0; i < 5; i++) {
-    int id = int(random(NUMPIXELS));
-    //byte col[3];
-    //chooseColor(col);
-    pixels.setPixelColor(id, random(red), random(green), random(blue));
+  for (j = 0; j < 256; j++) {
+    effaceTout();
+    for (i = 0; i < 5; i++) {
+      int id = int(random(NUMPIXELS));
+      //byte col[3];
+      //chooseColor(col);
+      pixels.setPixelColor(id, random(red), random(green), random(blue));
+    }
+    pixels.show();
+    delay(5);
   }
-  pixels.show();
-delay(5);
+
+  isAnimationFinished = true;
+
+
 
 
 }
@@ -177,6 +171,8 @@ void sky(uint8_t wait) {
     pixels.show();
     delay(wait);
   }
+  isAnimationFinished = true;
+
 }
 
 void sparklingSky(uint8_t wait) {
@@ -209,6 +205,9 @@ void rainbow(uint8_t wait) {
     pixels.show();
     delay(wait);
   }
+
+  isAnimationFinished = true;
+
 }
 
 // Input a value 0 to 255 to get a color value.
