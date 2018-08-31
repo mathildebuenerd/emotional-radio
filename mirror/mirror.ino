@@ -33,6 +33,7 @@ void setup() {
 
   // Initialize the first classifier to 0
   lastClassifier = 0;
+  classifier = 1;
   isAnimationFinished = false;
 
   // Starts the first animation
@@ -51,25 +52,24 @@ void effaceTout() {
 void loop() {
 
   if (Serial.available()) {
-      classifier = Serial.read();
-    }
+    classifier = Serial.read();
+  }
 
 
   // If there is no animation at the time
   if (isAnimationFinished || classifier != lastClassifier) {
-    
-    //  if (classifier != lastClassifier) {
+
     effaceTout();
     if (classifier == '1') {
       sky(1);
     } else if (classifier == '2') {
       sparkle(100, 100, 255);
     } else if (classifier == '3') {
-      rainbow(3);
+      // Effect by https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
+      Fire(55,120,15);
     }
 
     lastClassifier = classifier;
-    //  }
   }
 
 
@@ -88,7 +88,7 @@ void sparkle(int red, int green, int blue) {
 
   int i, j;
 
-  for (j = 0; j < 256; j++) {
+  for (j = 0; j < 10; j++) {
     effaceTout();
     for (i = 0; i < 5; i++) {
       int id = int(random(NUMPIXELS));
@@ -97,13 +97,10 @@ void sparkle(int red, int green, int blue) {
       pixels.setPixelColor(id, random(red), random(green), random(blue));
     }
     pixels.show();
-    delay(5);
+    delay(1);
   }
 
   isAnimationFinished = true;
-
-
-
 
 }
 
@@ -172,13 +169,11 @@ void sky(uint8_t wait) {
     delay(wait);
   }
   isAnimationFinished = true;
-
 }
 
 void sparklingSky(uint8_t wait) {
 
   uint16_t i, j;
-
   effaceTout();
 
   for (j = 0; j < 256; j++) {
@@ -223,4 +218,59 @@ uint32_t Wheel(byte WheelPos) {
   //}
   //WheelPos -= 170;
   //return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
+
+void Fire(int Cooling, int Sparking, int SpeedDelay) {
+
+  static byte heat[NUMPIXELS];
+  int cooldown;
+
+  // Step 1.  Cool down every cell a little
+  for ( int i = 0; i < NUMPIXELS; i++) {
+    cooldown = random(0, ((Cooling * 10) / NUMPIXELS) + 2);
+
+    if (cooldown > heat[i]) {
+      heat[i] = 0;
+    } else {
+      heat[i] = heat[i] - cooldown;
+    }
+  }
+
+  // Step 2.  Heat from each cell drifts 'up' and diffuses a little
+  for ( int k = NUMPIXELS - 1; k >= 2; k--) {
+    heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2]) / 3;
+  }
+
+  // Step 3.  Randomly ignite new 'sparks' near the bottom
+  if ( random(255) < Sparking ) {
+    int y = random(7);
+    heat[y] = heat[y] + random(160, 255);
+    //heat[y] = random(160,255);
+  }
+
+  // Step 4.  Convert heat to LED colors
+  for ( int j = 0; j < NUMPIXELS; j++) {
+    setPixelHeatColor(j, heat[j] );
+  }
+  pixels.show();
+  delay(SpeedDelay);
+}
+
+void setPixelHeatColor (int Pixel, byte temperature) {
+
+  // Scale 'heat' down from 0-255 to 0-191
+  byte t192 = round((temperature / 255.0) * 191);
+
+  // calculate ramp up from
+  byte heatramp = t192 & 0x3F; // 0..63
+  heatramp <<= 2; // scale up to 0..252
+
+  // figure out which third of the spectrum we're in:
+  if ( t192 > 0x80) {                    // hottest
+    pixels.setPixelColor(Pixel, 255, 255, heatramp);
+  } else if ( t192 > 0x40 ) {            // middle
+    pixels.setPixelColor(Pixel, 255, heatramp, 0);
+  } else {                               // coolest
+    pixels.setPixelColor(Pixel, heatramp, 0, 0);
+  }
 }
