@@ -22,6 +22,7 @@ class Emotion {
   }
   
   void lightLED(String classifier) {
+    println("j'ai envoye " + classifier);
     myPort.write(classifier); // Send the current classifier to Arduino
   }
 }

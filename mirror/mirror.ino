@@ -34,10 +34,7 @@ void setup() {
   // Initialize the first classifier to 0
   lastClassifier = 0;
   classifier = 1;
-  isAnimationFinished = false;
-
-  // Starts the first animation
-  sky(1);
+  isAnimationFinished = true;
 
 
 }
@@ -49,7 +46,10 @@ void effaceTout() {
   pixels.show();
 }
 
+
 void loop() {
+
+
 
   if (Serial.available()) {
     classifier = Serial.read();
@@ -66,20 +66,15 @@ void loop() {
       sparkle(100, 100, 255);
     } else if (classifier == '3') {
       // Effect by https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
-      Fire(55,120,15);
+      Fire(55, 120, 15);
+    } else if (classifier = '9') {
+      effaceTout();
     }
-
     lastClassifier = classifier;
+
+  } else {
+    effaceTout();
   }
-
-
-
-
-  //hasard();
-  //sparkle(100, 100, 255);
-  //sky(1);
-  //sparklingSky(1);
-  //delay(10);
 
 }
 
@@ -87,6 +82,8 @@ void loop() {
 void sparkle(int red, int green, int blue) {
 
   int i, j;
+  isAnimationFinished = false;
+
 
   for (j = 0; j < 10; j++) {
     effaceTout();
@@ -156,6 +153,7 @@ void hasard() {
 
 void sky(uint8_t wait) {
   uint16_t i, j;
+  isAnimationFinished = false;
 
   for (j = 0; j < 256; j++) {
     for (i = 0; i < pixels.numPixels(); i++) {
@@ -174,6 +172,8 @@ void sky(uint8_t wait) {
 void sparklingSky(uint8_t wait) {
 
   uint16_t i, j;
+  isAnimationFinished = false;
+
   effaceTout();
 
   for (j = 0; j < 256; j++) {
@@ -188,10 +188,13 @@ void sparklingSky(uint8_t wait) {
     pixels.show();
     delay(wait);
   }
+  isAnimationFinished = true;
 }
 
 void rainbow(uint8_t wait) {
   uint16_t i, j;
+  isAnimationFinished = false;
+
 
   for (j = 0; j < 256; j++) {
     for (i = 0; i < pixels.numPixels(); i++) {
@@ -224,6 +227,8 @@ void Fire(int Cooling, int Sparking, int SpeedDelay) {
 
   static byte heat[NUMPIXELS];
   int cooldown;
+  isAnimationFinished = false;
+
 
   // Step 1.  Cool down every cell a little
   for ( int i = 0; i < NUMPIXELS; i++) {
@@ -254,6 +259,7 @@ void Fire(int Cooling, int Sparking, int SpeedDelay) {
   }
   pixels.show();
   delay(SpeedDelay);
+  isAnimationFinished = true;
 }
 
 void setPixelHeatColor (int Pixel, byte temperature) {
