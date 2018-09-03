@@ -1,7 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 #define PINNeoPixel 8
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS 104
+#define NUMPIXELS 95
 #define BRIGHTNESS 10
 
 // COLORS
@@ -55,7 +55,7 @@ void loop() {
     if (classifier == '1') {
       sparkle(100, 100, 255);
     } else if (classifier == '2') {
-      rainbow(1);
+      rainbowCycle(0);
     } else if (classifier == '3') {
       sky(2);
     } else if (classifier = '9') { 
@@ -117,9 +117,6 @@ void sparklingSky(uint8_t wait) {
       int randomPixel = int(random(pixels.numPixels()));
       pixels.setPixelColor(randomPixel, SkyWheel((i + j) & -100));
       //int newj = map(j, 0, 256, 128, 170);
-      //Serial.println(j);
-      //Serial.println(newj);
-      // pixels.setPixelColor(i, j+i, j+i,255);
     }
     pixels.show();
     delay(wait);
@@ -127,21 +124,18 @@ void sparklingSky(uint8_t wait) {
   isAnimationFinished = true;
 }
 
-void rainbow(uint8_t wait) {
+void rainbowCycle(uint8_t wait) {
   uint16_t i, j;
-  isAnimationFinished = false;
 
-
-  for (j = 0; j < 256; j++) {
-    for (i = 0; i < pixels.numPixels(); i++) {
-      pixels.setPixelColor(i, RainbowWheel((i + j) & 255));
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< NUMPIXELS; i++) {
+      pixels.setPixelColor(i, RainbowWheel(((i * 256 / NUMPIXELS) + j) & 255));
     }
     pixels.show();
     delay(wait);
   }
 
   isAnimationFinished = true;
-
 }
 
 // Input a value 0 to 255 to get a color value.
