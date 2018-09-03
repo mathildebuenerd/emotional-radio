@@ -6,7 +6,7 @@
   <outputs class="linked-list">
     <wekimini.osc.OSCClassificationOutput>
       <name>outputs-1</name>
-      <numClasses>3</numClasses>
+      <numClasses>4</numClasses>
       <isSendingDistribution>false</isSendingDistribution>
     </wekimini.osc.OSCClassificationOutput>
   </outputs>
